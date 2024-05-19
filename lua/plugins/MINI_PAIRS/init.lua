@@ -12,9 +12,9 @@ return {
 				[']'] = { action = 'close', pair = '[]', neigh_pattern = '[^\\].'},
 				['}'] = { action = 'close', pair = '{}', neigh_pattern = '[^\\].'},
 
-				['"'] = { action = 'closeopen', pair = '""', neigh_pattern = '[^\\][$ )\r\n]', register = { bs = false }},
-				["'"] = { action = 'closeopen', pair = "''", neigh_pattern = '[^\\%a][$ \r\n]', register = { bs = false }},
-				['`'] = { action = 'closeopen', pair = "``", neigh_pattern = '[^\\][$ )\r\n]', register = { bs = false }},
+				['"'] = { action = 'closeopen', pair = '""', neigh_pattern = '[\r ][\n ]', register = { bs = false }},
+				["'"] = { action = 'closeopen', pair = "''", neigh_pattern = '[\r ][\n ]', register = { bs = false }},
+				['`'] = { action = 'closeopen', pair = "``", neigh_pattern = '[\r ][\n ]', register = { bs = false }},
 			}
 		})
 	end

@@ -5,6 +5,7 @@ return {
 		'saadparwaiz1/cmp_luasnip',
 		'hrsh7th/cmp-nvim-lsp',
 		'rafamadriz/friendly-snippets',
+		'lukas-reineke/cmp-under-comparator',
 	},
 	config = function ()
 		local cmp = require 'cmp'
@@ -12,44 +13,48 @@ return {
 		require('luasnip.loaders.from_vscode').lazy_load()
 		luasnip.config.setup {}
 
+		local lspkind_comparator = function(conf)
+			local lsp_types = require('cmp.types').lsp
+				return function(entry1, entry2)
+					if entry1.source.name ~= 'nvim_lsp' then
+						if entry2.source.name == 'nvim_lsp' then
+							return false
+						else
+							return nil
+						end
+					end
+					local kind1 = lsp_types.CompletionItemKind[entry1:get_kind()]
+					local kind2 = lsp_types.CompletionItemKind[entry2:get_kind()]
+
+					local priority1 = conf.kind_priority[kind1] or 0
+					local priority2 = conf.kind_priority[kind2] or 0
+					if priority1 == priority2 then
+						return nil
+					end
+				return priority2 < priority1
+			end
+		end
+
+		local label_comparator = function(entry1, entry2)
+			return entry1.completion_item.label < entry2.completion_item.label
+		end
+
 		cmp.setup {
 			snippet = {
 				expand = function(args)
 					luasnip.lsp_expand(args.body)
 				end,
 			},
+				
 			mapping = cmp.mapping.preset.insert {
 				['<C-n>'] = cmp.mapping.select_next_item(),
-				['<C-p>'] = cmp.mapping.select_prev_item(),
+				['<C-l>'] = cmp.mapping.select_prev_item(),
 				['<C-d>'] = cmp.mapping.scroll_docs(-4),
 				['<C-f>'] = cmp.mapping.scroll_docs(4),
-				['<C-Space>'] = cmp.mapping.complete {},
-				['<CR>'] = cmp.mapping.confirm {
+				['<C-e>'] = cmp.mapping.confirm {
 					behavior = cmp.ConfirmBehavior.Insert,
 					select = true,
 				},
-				['<S-CR>'] = (function()
-					cmp.mapping.close()
-					vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<CR>', true, false, true), 'i', false)
-				end)(),
-				-- ['<Tab>'] = cmp.mapping(function(fallback)
-				-- 	if cmp.visible() then
-				-- 		cmp.select_next_item()
-				-- 	elseif luasnip.expand_or_locally_jumpable() then
-				-- 		luasnip.expand_or_jump()
-				-- 	else
-				-- 		fallback()
-				-- 	end
-				-- 	end, { 'i', 's' }),
-				['<S-Tab>'] = cmp.mapping(function(fallback)
-					if cmp.visible() then
-						cmp.select_prev_item()
-					elseif luasnip.locally_jumpable(-1) then
-						luasnip.jump(-1)
-					else
-						fallback()
-					end
-					end, { 'i', 's' }),
 			},
 			sources = {
 				{ name = 'nvim_lsp', keyword_length = 1 },
@@ -58,11 +63,45 @@ return {
 					auto_open = true
 				}
 			},
-			-- experimental = {
-			-- 	ghost_text = true
-			-- }
-
+			sorting = {
+				priority_weight = 2,
+				comparators = {
+					require("cmp-under-comparator").under,
+					cmp.config.compare.exact,
+					cmp.config.compare.recently_used,
+					cmp.config.compare.score,
+					lspkind_comparator({
+						kind_priority = {
+							EnumMember = 13,
+							Field = 12,
+							Property = 12,
+							Class = 11,
+							Variable = 11,
+							Constant = 10,
+							Enum = 10,
+							Event = 10,
+							Function = 10,
+							Method = 10,
+							Operator = 10,
+							Reference = 10,
+							Struct = 10,
+							File = 8,
+							Folder = 8,
+							Color = 5,
+							Module = 5,
+							Keyword = 2,
+							Constructor = 1,
+							Interface = 1,
+							Snippet = 0,
+							Text = 1,
+							TypeParameter = 1,
+							Unit = 1,
+							Value = 1,
+						},
+					}),
+					label_comparator,
+				},
+			}
 		}
-		
 	end
 }

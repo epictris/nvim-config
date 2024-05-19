@@ -5,4 +5,3 @@ require('lsp')
 require("keybinds")
 require("autocmds")
 require("theme")
-

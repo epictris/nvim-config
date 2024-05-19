@@ -13,49 +13,31 @@ local nmap = function (lhs, rhs, opts)
   vim.keymap.set("n", lhs, rhs, opts)
 end
 
--- For switching between colemak and qwerty layout
-local colemak_bindings = function ()
-  vim.keymap.set({"n", "v", "o"}, ",", "l") -- map comma to l 
-  vim.keymap.set({"n", "v", "o"}, "n", "k") -- map n to k 
-  vim.keymap.set({"n", "v", "o"}, "e", "j") -- map e to j 
-
-  vim.keymap.set({"n", "v", "o"}, "l", "n")-- map l to n
-  vim.keymap.set({"n", "v", "o"}, "L", "N")-- map L to N
-  vim.keymap.set({"n", "v", "o"}, "j", "e")-- map j to e
-
-  -- vim.keymap.set({"n", "v"}, "n", "h")
-  -- vim.keymap.set({"n", "o", "v"}, "e", "k")
-  -- vim.keymap.set({"n", "v"}, "i", "l")
-  -- vim.keymap.set({"n", "o", "v"}, ",", "j")
-  -- vim.keymap.set({"n", "v"}, "h", "i")
-  -- vim.keymap.set({"n", "o", "v"}, "j", "e")
-  -- vim.keymap.set({"n", "o", "v"}, "k", ",")
-  -- vim.keymap.set({"n", "v"}, "l", "n")
-  -- vim.keymap.set({"n", "v"}, "L", "N")
-end
-
-local qwerty_bindings = function ()
-  vim.keymap.set({"n", "o", "v"}, "n", "n")
-  vim.keymap.set({"n", "o", "v"}, "e", "e")
-  vim.keymap.set({"n", "o", "v"}, "i", "i")
-  vim.keymap.set({"n", "o", "v"}, ",", ",")
-  vim.keymap.set({"n", "o", "v"}, "h", "h")
-  vim.keymap.set({"n", "o", "v"}, "j", "j")
-  vim.keymap.set({"n", "o", "v"}, "k", "k")
-  vim.keymap.set({"n", "o", "v"}, "l", "l")
-  vim.keymap.set({"n", "o", "v"}, "N", "N")
-end
-
-nmap("<leader>bc", colemak_bindings)
-nmap("<leader>bq", qwerty_bindings)
-
 -- Python formatting (black, ruff)
 local format_python = function ()
   local current_file = vim.fn.expand('%:p')
   vim.cmd.w()
-  vim.cmd('!black '..current_file)
-  vim.cmd('!silent ruff '..current_file..' --fix')
+  -- vim.cmd('!python -m black '..current_file)
+  vim.cmd('!python -m ruff --fix '..current_file)
+  vim.cmd('!python -m ruff format '..current_file)
 end
+
+-- local normal_command = 'norm yiwOprint("<C-r>"-><C-r>=expand("%")<CR>:<C-r>=line(".")+1<CR>"<Esc>'
+
+local qfx = function()
+  local list = vim.fn.getqflist()
+  for index, value in ipairs(list) do
+    local name = vim.fn.bufname(value.bufnr)
+    vim.cmd.norm('yiwOprint("<Esc>pa->'..name..':'..value.lnum..'")<Esc>')
+    if index < #list then
+      vim.cmd.cnext()
+    end
+    print(index, name)
+  end
+end
+
+nmap("<leader>Qp", qfx)
+
 
 nmap("<C-f>", format_python)
 
@@ -69,206 +51,16 @@ nmap("<C-d>", "<C-d>zz")
 nmap("<leader>p", '"0p')
 
 -- Easy yank to clipboard
-nmap("<C-y>", '"+y')
+vim.keymap.set({"n", "v"}, "<leader>y", '"+y')
 
 -- Easy vertical/horizontal split
 nmap("<leader>|", vim.cmd.vsplit)
 nmap("<leader>_", vim.cmd.split)
 
--- Swap ` and '
-nmap("'", "`") -- ' now performs row & column-wise jump
 
 -- VimWiki
 nmap("<Leader>ww", "<Plug>VimwikiIndex", { desc = "Open Wiki" })
 
--- Binary jump mode
-local current_jump_type = nil
-
-local JumpType = { HORIZONTAL = "horizontal", VERTICAL = "vertical" }
-local JumpDirection = { UP = "up", DOWN = "down", LEFT = "left", RIGHT = "right" }
-
-local vertical_bounds = {
-  top = nil,
-  bottom = nil,
-}
-
-local horizontal_bounds = {
-  left = nil,
-  right = nil,
-}
-
-local function reset_vertical_bounds()
-  vertical_bounds = {
-    top = nil,
-    bottom = nil,
-  }
-  vim.cmd('hi clear CursorLine')
-end
-
-local function reset_horizontal_bounds()
-  horizontal_bounds = {
-    top = nil,
-    bottom = nil,
-  }
-  vim.wo.colorcolumn = ""
-end
-
-local function validate_vertical_jump(jump_direction, current_row)
-  if jump_direction == JumpDirection.UP then
-    if current_row == 1 then
-      return false
-    end
-  elseif jump_direction == JumpDirection.DOWN then
-    if current_row == vim.fn.line("$") then
-      return false
-    end
-  end
-  return true
-end
-
-local function validate_horizontal_jump(jump_direction, current_col)
-  if jump_direction == JumpDirection.LEFT then
-    if current_col == 1 then
-      return false
-    end
-  elseif jump_direction == JumpDirection.RIGHT then
-    local end_of_line = vim.fn.col("$")
-    if current_col == end_of_line - 1 or end_of_line == 1 then
-      return false
-    end
-  end
-  return true
-end
-
-local function calculate_jump_target(current_location, jump_boundary)
-  if current_location > jump_boundary then
-    local distance = current_location - jump_boundary
-    return math.floor(current_location - distance * 0.5)
-    -- return math.floor(((current_location + jump_boundary) / 2 ))
-  elseif current_location < jump_boundary then
-    local distance = jump_boundary - current_location
-    return math.floor(current_location + distance * 0.3)
-    -- return math.floor(((current_location + jump_boundary) / 2 ))
-  end 
-  return current_location
-end
-    
-local function vertical_jump(jump_direction)
-  local current_row = vim.fn.line(".")
-  local target_row = nil
-
-  if not validate_vertical_jump(jump_direction, current_row) then
-    return reset_vertical_bounds()
-  end
-
-  if jump_direction == JumpDirection.UP then
-    target_row = calculate_jump_target(current_row, vertical_bounds.top or vim.fn.line("w0"))
-    if target_row >= current_row then
-      target_row = target_row - 1
-      vertical_bounds.top = target_row
-      vertical_bounds.bottom = target_row
-    else
-      vertical_bounds.bottom = current_row
-    end
-  elseif jump_direction == JumpDirection.DOWN then
-    target_row = calculate_jump_target(current_row, vertical_bounds.bottom or vim.fn.line("w$"))
-    if target_row <= current_row then
-      target_row = target_row + 1
-      vertical_bounds.top = target_row
-      vertical_bounds.bottom = target_row
-    else
-      vertical_bounds.top = current_row
-    end
-  end
-
-  current_jump_type = JumpType.VERTICAL
-  vim.cmd.normal(target_row.."G")
-  vim.wo.cursorline = true
-  vim.cmd('highlight CursorLine guibg=#333340')
-
-end
-
-local function horizontal_jump(jump_direction)
-  local current_col = vim.fn.col(".")
-  local current_row = vim.fn.line(".")
-  local target_col = nil
-
-  if not validate_horizontal_jump(jump_direction, current_col) then
-    return reset_horizontal_bounds()
-  end
-
-  if jump_direction == JumpDirection.LEFT then
-    target_col = calculate_jump_target(current_col, horizontal_bounds.left or 1)
-    if target_col >= current_col then
-      target_col = target_col - 1
-      horizontal_bounds.right = target_col
-      horizontal_bounds.left = target_col
-    else
-      horizontal_bounds.right = current_col
-    end
-  elseif jump_direction == JumpDirection.RIGHT then
-    target_col = calculate_jump_target(current_col, horizontal_bounds.right or vim.fn.col("$"))
-    if target_col <= current_col then
-      target_col = target_col + 1
-      horizontal_bounds.right = target_col
-      horizontal_bounds.left = target_col
-    else
-      horizontal_bounds.left = current_col
-    end
-  end
-  local indent_level = vim.fn.indent(current_row)
-  local tab_count = 0
-  local line = vim.api.nvim_get_current_line()
-  for char_index = 1, #line do
-    if string.sub(line, char_index, char_index) == "\t" then
-      tab_count = tab_count + 1
-    else
-      break
-    end
-  end
-
-  current_jump_type = JumpType.HORIZONTAL
-  vim.cmd.normal("0")
-  if target_col > 1 then
-    vim.cmd.normal(tostring(target_col - 1).."l")
-  end
-  if tab_count > 0 then
-    if target_col >= tab_count then
-      vim.o.colorcolumn = tostring(target_col + indent_level - tab_count)
-    else
-      local spaces_per_tab = indent_level/tab_count
-      vim.o.colorcolumn = tostring(target_col * spaces_per_tab)
-    end
-  else
-    vim.o.colorcolumn = tostring(target_col)
-  end
-end
-
-local function jump_up() vertical_jump(JumpDirection.UP) end
-local function jump_down() vertical_jump(JumpDirection.DOWN) end
-local function jump_right() horizontal_jump(JumpDirection.RIGHT) end
-local function jump_left() horizontal_jump(JumpDirection.LEFT) end
-
-vim.api.nvim_create_autocmd({"CursorMoved", "ModeChanged"}, {
-  group = vim.api.nvim_create_augroup("test-group", { clear = true }),
-  callback = function()
-    if current_jump_type ~= JumpType.HORIZONTAL then 
-      if horizontal_bounds.left ~= nil or horizontal_bounds.right ~= nil then
-        reset_horizontal_bounds()
-      end
-    end
-    if current_jump_type ~= JumpType.VERTICAL then 
-      if vertical_bounds.top ~= nil or vertical_bounds.bottom ~= nil then
-        reset_vertical_bounds()
-      end
-    end
-    current_jump_type = nil
-  end
-})
--- vim.keymap.set({"n", "o", "v"}, "H", jump_left)
--- vim.keymap.set({"n", "o", "v"}, "J", jump_down)
--- vim.keymap.set({"n", "o", "v"}, "K", jump_up)
--- vim.keymap.set({"n", "o", "v"}, "L", jump_right)
 
 table.unpack = table.unpack or unpack
 
@@ -425,3 +217,193 @@ local function copy_tasks()
 end
 
 vim.keymap.set("n", "<Leader>wx", copy_tasks, { desc = "Copy tasks from previous day" })
+
+-- Binary jump mode
+-- local current_jump_type = nil
+--
+-- local JumpType = { HORIZONTAL = "horizontal", VERTICAL = "vertical" }
+-- local JumpDirection = { UP = "up", DOWN = "down", LEFT = "left", RIGHT = "right" }
+--
+-- local vertical_bounds = {
+--   top = nil,
+--   bottom = nil,
+-- }
+--
+-- local horizontal_bounds = {
+--   left = nil,
+--   right = nil,
+-- }
+--
+-- local function reset_vertical_bounds()
+--   vertical_bounds = {
+--     top = nil,
+--     bottom = nil,
+--   }
+--   vim.cmd('hi clear CursorLine')
+-- end
+--
+-- local function reset_horizontal_bounds()
+--   horizontal_bounds = {
+--     top = nil,
+--     bottom = nil,
+--   }
+--   vim.wo.colorcolumn = ""
+-- end
+--
+-- local function validate_vertical_jump(jump_direction, current_row)
+--   if jump_direction == JumpDirection.UP then
+--     if current_row == 1 then
+--       return false
+--     end
+--   elseif jump_direction == JumpDirection.DOWN then
+--     if current_row == vim.fn.line("$") then
+--       return false
+--     end
+--   end
+--   return true
+-- end
+--
+-- local function validate_horizontal_jump(jump_direction, current_col)
+--   if jump_direction == JumpDirection.LEFT then
+--     if current_col == 1 then
+--       return false
+--     end
+--   elseif jump_direction == JumpDirection.RIGHT then
+--     local end_of_line = vim.fn.col("$")
+--     if current_col == end_of_line - 1 or end_of_line == 1 then
+--       return false
+--     end
+--   end
+--   return true
+-- end
+--
+-- local function calculate_jump_target(current_location, jump_boundary)
+--   print(current_location, jump_boundary)
+--   if current_location > jump_boundary then
+--     local distance = current_location - jump_boundary
+--     return math.floor(current_location - distance * 0.5)
+--     -- return math.floor(((current_location + jump_boundary) / 2 ))
+--   elseif current_location < jump_boundary then
+--     local distance = jump_boundary - current_location
+--     return math.floor(current_location + distance * 0.5)
+--     -- return math.floor(((current_location + jump_boundary) / 2 ))
+--   end 
+--   return current_location
+-- end
+--     
+-- local function vertical_jump(jump_direction)
+--   local current_row = vim.fn.line(".")
+--   local target_row = nil
+--
+--   if not validate_vertical_jump(jump_direction, current_row) then
+--     return reset_vertical_bounds()
+--   end
+--
+--   if jump_direction == JumpDirection.UP then
+--     target_row = calculate_jump_target(current_row, vertical_bounds.top or vim.fn.line("w0"))
+--     if target_row >= current_row then
+--       target_row = target_row - 1
+--       vertical_bounds.top = target_row
+--       vertical_bounds.bottom = target_row
+--     else
+--       vertical_bounds.bottom = current_row
+--     end
+--   elseif jump_direction == JumpDirection.DOWN then
+--     target_row = calculate_jump_target(current_row, vertical_bounds.bottom or vim.fn.line("w$"))
+--     if target_row <= current_row then
+--       target_row = target_row + 1
+--       vertical_bounds.top = target_row
+--       vertical_bounds.bottom = target_row
+--     else
+--       vertical_bounds.top = current_row
+--     end
+--   end
+--
+--   current_jump_type = JumpType.VERTICAL
+--   vim.cmd.normal(target_row.."G")
+--   vim.wo.cursorline = true
+--   vim.cmd('highlight CursorLine guibg=#333340')
+--
+-- end
+--
+-- local function horizontal_jump(jump_direction)
+--   local current_col = vim.fn.col(".")
+--   local current_row = vim.fn.line(".")
+--   local target_col = nil
+--
+--   if not validate_horizontal_jump(jump_direction, current_col) then
+--     return reset_horizontal_bounds()
+--   end
+--
+--   if jump_direction == JumpDirection.LEFT then
+--     target_col = calculate_jump_target(current_col, horizontal_bounds.left or 1)
+--     if target_col >= current_col then
+--       target_col = target_col - 1
+--       horizontal_bounds.right = target_col
+--       horizontal_bounds.left = target_col
+--     else
+--       horizontal_bounds.right = current_col
+--     end
+--   elseif jump_direction == JumpDirection.RIGHT then
+--     target_col = calculate_jump_target(current_col, horizontal_bounds.right or vim.fn.col("$"))
+--     if target_col <= current_col then
+--       target_col = target_col + 1
+--       horizontal_bounds.right = target_col
+--       horizontal_bounds.left = target_col
+--     else
+--       horizontal_bounds.left = current_col
+--     end
+--   end
+--   local indent_level = vim.fn.indent(current_row)
+--   local tab_count = 0
+--   local line = vim.api.nvim_get_current_line()
+--   for char_index = 1, #line do
+--     if string.sub(line, char_index, char_index) == "\t" then
+--       tab_count = tab_count + 1
+--     else
+--       break
+--     end
+--   end
+--
+--   current_jump_type = JumpType.HORIZONTAL
+--   vim.cmd.normal("0")
+--   if target_col > 1 then
+--     vim.cmd.normal(tostring(target_col - 1).."l")
+--   end
+--   if tab_count > 0 then
+--     if target_col >= tab_count then
+--       vim.o.colorcolumn = tostring(target_col + indent_level - tab_count)
+--     else
+--       local spaces_per_tab = indent_level/tab_count
+--       vim.o.colorcolumn = tostring(target_col * spaces_per_tab)
+--     end
+--   else
+--     vim.o.colorcolumn = tostring(target_col)
+--   end
+-- end
+--
+-- local function jump_up() vertical_jump(JumpDirection.UP) end
+-- local function jump_down() vertical_jump(JumpDirection.DOWN) end
+-- local function jump_right() horizontal_jump(JumpDirection.RIGHT) end
+-- local function jump_left() horizontal_jump(JumpDirection.LEFT) end
+--
+-- vim.api.nvim_create_autocmd({"CursorMoved", "ModeChanged"}, {
+--   group = vim.api.nvim_create_augroup("test-group", { clear = true }),
+--   callback = function()
+--     if current_jump_type ~= JumpType.HORIZONTAL then 
+--       if horizontal_bounds.left ~= nil or horizontal_bounds.right ~= nil then
+--         reset_horizontal_bounds()
+--       end
+--     end
+--     if current_jump_type ~= JumpType.VERTICAL then 
+--       if vertical_bounds.top ~= nil or vertical_bounds.bottom ~= nil then
+--         reset_vertical_bounds()
+--       end
+--     end
+--     current_jump_type = nil
+--   end
+-- })
+-- vim.keymap.set({"n", "o", "v"}, "H", jump_left)
+-- vim.keymap.set({"n", "o", "v"}, "J", jump_down)
+-- vim.keymap.set({"n", "o", "v"}, "K", jump_up)
+-- vim.keymap.set({"n", "o", "v"}, "L", jump_right)

@@ -1,3 +1,4 @@
+vim.g["sneak#s_next"] = 1
 vim.o.incsearch = 1
 vim.o.hlsearch = true
 vim.wo.number = true
@@ -22,5 +23,7 @@ vim.o.swapfile = false
 vim.diagnostic.config({
 	virtual_text = false
 })
-vim.o.guicursor=""
-vim.cmd("autocmd OptionSet guicursor noautocmd set guicursor=")
+vim.o.guicursor="i:ver25"
+-- vim.cmd("autocmd OptionSet guicursor noautocmd set guicursor=")
+
+

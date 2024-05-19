@@ -15,13 +15,13 @@ return { "lewis6991/gitsigns.nvim",
 			},
 			on_attach = function ()
 				local gs = package.loaded.gitsigns
-				vim.keymap.set("n", "<C-e>", function()
+				vim.keymap.set("n", "<C-s>", function()
 					if vim.wo.diff then return ']c' end
 					vim.schedule(gs.next_hunk)
 					return '<Ignore>'
 				end, { expr = true, desc = "jump to next diff"})
 
-				vim.keymap.set("n", "<C-s>", function()
+				vim.keymap.set("n", "<C-c>", function()
 					if vim.wo.diff then return '[c' end
 					vim.schedule(gs.prev_hunk)
 					return '<Ignore>'

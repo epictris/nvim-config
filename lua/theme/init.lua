@@ -4,3 +4,5 @@ vim.cmd('highlight! link LineNr DevIconCmake')
 vim.cmd('highlight! link CursorLineNr @number')
 vim.cmd('hi clear CursorLine')
 vim.cmd('highlight! QuickFixLine guibg=#34343D guifg=none')
+
+vim.cmd('highlight Sneak guibg=#cbccc6 guifg=#2a313d')
