@@ -26,6 +26,7 @@ return {
 	-- NVIM_DAP = true,
 	NVIM_LSPCONFIG = true,
 	OIL = true,
+	OMNISHARP_EXTENDED = true,
 	SNEAK = true,
 	TELESCOPE = true,
 	TELESCOPE_LIVE_GREP_ARGS = true,

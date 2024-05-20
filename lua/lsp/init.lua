@@ -96,6 +96,16 @@ mason_lspconfig.setup_handlers({
     	filetypes = { 'python' }
     }),
 
+    -- pyright config
+    require('lspconfig')['omnisharp'].setup({
+    	capabilites = capabilities,
+    	on_attach = function(client, buffer)
+            on_attach(client, buffer)
+    	end,
+        settings = {},
+        cmd = { "dotnet", "/home/tris/.local/share/nvim/mason/packages/omnisharp/libexec/OmniSharp.dll"},
+    }),
+
 
     -- lua_ls config
     require('lspconfig')['lua_ls'].setup({
