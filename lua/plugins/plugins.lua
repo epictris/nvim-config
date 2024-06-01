@@ -24,7 +24,7 @@ return {
 	NEOGIT = true,
 	NOICE = true,
 	-- NVIM_BQF = true,
-	-- NVIM_DAP = true,
+	NVIM_DAP = true,
 	NVIM_LSPCONFIG = true,
 	OIL = true,
 	OMNISHARP_EXTENDED = true,

@@ -59,8 +59,8 @@ local goto_diary = function (root)
 
 end
 -- Notes
-nmap("<leader>d1", function() goto_diary("/Users/tris/wiki_unc") end, "go to current date")
-nmap("<leader>d2", function() goto_diary("/Users/tris/wiki_personal") end, "go to current date")
+nmap("<leader>j1", function() goto_diary("/Users/tris/wiki_unc") end, "go to current date")
+nmap("<leader>j2", function() goto_diary("/Users/tris/wiki_personal") end, "go to current date")
 nmap("<leader>w1", function() vim.cmd.cd("/Users/tris/wiki_unc") vim.cmd.e("/Users/tris/wiki_unc/index.md")end, "go to wiki index")
 nmap("<leader>w2", function() vim.cmd.cd("/Users/tris/wiki_personal") vim.cmd.e("/Users/tris/wiki_personal/index.md")end, "go to wiki index")
 
