@@ -45,13 +45,17 @@ return {
 					luasnip.lsp_expand(args.body)
 				end,
 			},
-				
+			window = {
+				completion = {
+					col_offset = 4
+				}
+			},
 			mapping = cmp.mapping.preset.insert {
-				['<C-n>'] = cmp.mapping.select_next_item(),
-				['<C-l>'] = cmp.mapping.select_prev_item(),
-				['<C-d>'] = cmp.mapping.scroll_docs(-4),
-				['<C-f>'] = cmp.mapping.scroll_docs(4),
-				['<C-e>'] = cmp.mapping.confirm {
+				['<C-d>'] = cmp.mapping.select_next_item(),
+				['<C-u>'] = cmp.mapping.select_prev_item(),
+				-- ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+				-- ['<C-f>'] = cmp.mapping.scroll_docs(4),
+				['<C-n>'] = cmp.mapping.confirm {
 					behavior = cmp.ConfirmBehavior.Insert,
 					select = true,
 				},

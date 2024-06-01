@@ -15,12 +15,12 @@ end
 
 return {
 	'nvim-lualine/lualine.nvim',
-	dependencies = { 
+	dependencies = {
 		'nvim-tree/nvim-web-devicons',
 		'ThePrimeagen/harpoon',
 	},
 	config = function ()
-		local custom_theme = require('lualine.themes.auto')	
+		local custom_theme = require('lualine.themes.auto')
 		custom_theme.normal.x = { bg = '#ffcc66' , fg = '#0E1019', gui='bold' }
 		require('lualine').setup({
 			options = {

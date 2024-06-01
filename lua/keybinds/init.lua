@@ -49,6 +49,7 @@ end
 local goto_diary = function (root)
 	local file = root.."/diary/"..os.date("%Y-%m-%d")..".md"
 	vim.cmd.e(file)
+	vim.cmd.cd(root)
 	local current_date_header = os.date("%A %d %B %Y")
 	if not file_exists(file) then
 		vim.cmd.w()
@@ -60,8 +61,8 @@ end
 -- Notes
 nmap("<leader>d1", function() goto_diary("/Users/tris/wiki_unc") end, "go to current date")
 nmap("<leader>d2", function() goto_diary("/Users/tris/wiki_personal") end, "go to current date")
-nmap("<leader>w1", function() vim.cmd.e("/Users/tris/wiki_unc/index.md")end, "go to wiki index")
-nmap("<leader>w2", function() vim.cmd.e("/Users/tris/wiki_personal/index.md")end, "go to wiki index")
+nmap("<leader>w1", function() vim.cmd.cd("/Users/tris/wiki_unc") vim.cmd.e("/Users/tris/wiki_unc/index.md")end, "go to wiki index")
+nmap("<leader>w2", function() vim.cmd.cd("/Users/tris/wiki_personal") vim.cmd.e("/Users/tris/wiki_personal/index.md")end, "go to wiki index")
 
 
 vim.api.nvim_set_hl(0, 'VimwikiHeader1', { link = "CmpItemKindText" })
