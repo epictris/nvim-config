@@ -13,14 +13,6 @@ local nmap = function (lhs, rhs, opts)
   vim.keymap.set("n", lhs, rhs, opts)
 end
 
--- Python formatting (black, ruff)
-local format_python = function ()
-  local current_file = vim.fn.expand('%:p')
-  vim.cmd.w()
-  -- vim.cmd('!python -m black '..current_file)
-  vim.cmd('!python -m ruff --fix '..current_file)
-  vim.cmd('!python -m ruff format '..current_file)
-end
 
 -- local normal_command = 'norm yiwOprint("<C-r>"-><C-r>=expand("%")<CR>:<C-r>=line(".")+1<CR>"<Esc>'
 
@@ -38,8 +30,6 @@ end
 
 nmap("<leader>Qp", qfx)
 
-
-nmap("<C-f>", format_python)
 
 -- Recentre after page up/down and jump to search
 nmap("n", "nzz")

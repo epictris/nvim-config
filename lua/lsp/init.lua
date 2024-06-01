@@ -25,21 +25,7 @@ local mason_lspconfig = require 'mason-lspconfig'
 --     ensure_installed = servers
 -- }
 
-local format_ruff = function ()
-    local current_file = vim.fn.expand('%:p')
-    vim.cmd.w()
-    vim.cmd('!python -m ruff --fix '..current_file)
-    vim.cmd('!python -m ruff format '..current_file)
-end
 
-local format_ts = function ()
-    local current_file = vim.fn.expand('%:p')
-    vim.cmd.w()
-    -- vim.cmd.pwd("main/site")
-    vim.cmd('!cd main/site && npx biome format --write '..current_file)
-    -- print('!cd main/site && npx biome format --write '..current_file)
-    -- vim.cmd.pwd("../..")
-end
 
 
 
@@ -70,7 +56,6 @@ mason_lspconfig.setup_handlers({
     require('lspconfig')['pyright'].setup({
     	capabilites = capabilities,
     	on_attach = function(client, buffer)
-              vim.keymap.set('n', "<C-f>", format_ruff)
             on_attach(client, buffer)
     	end,
     	settings = {
