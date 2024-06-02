@@ -6,6 +6,7 @@ return {
 	},
 	build = ':TSUpdate',
 	config = function ()
+---@diagnostic disable-next-line: missing-fields
 		require('nvim-treesitter.configs').setup {
 			textobjects = {
 				select = {
@@ -19,7 +20,7 @@ return {
 				}
 			},
 			ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim',
-				'markdown', 'markdown_inline', 'cmake' },
+				'markdown', 'markdown_inline', 'cmake' , 'bash'},
 			highlight = { enable = true },
 			indent = { enable = true },
 			incremental_selection = {
