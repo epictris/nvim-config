@@ -72,7 +72,7 @@ return {
 		dap.adapters.python = {
 			type = "server",
 			port = "4000",
-				executable = {
+			executable = {
 				command = (os.getenv('VIRTUAL_ENV') or "") .. '/bin/python',
 				args = { (os.getenv('VIRTUAL_ENV') or "") .. "/lib/python3.11/site-packages/debugpy/adapter", "--port", "4000"}
 			}

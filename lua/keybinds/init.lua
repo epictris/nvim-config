@@ -17,8 +17,8 @@ vim.keymap.set('n', 'qq', 'q')
 nmap('<leader>sb', function() telescope.buffers(picker({})) end, 'Session buffers')
 
 -- File Navigation
-nmap("<leader>nt", function() MiniFiles.open(vim.api.nvim_buf_get_name(0)) end, "(n)avigate (t)his directory")
-nmap("<leader>nr", function() MiniFiles.open(nil, false) end, "(n)avigate (r)oot directory")
+-- nmap("<leader>nt", function() MiniFiles.open(vim.api.nvim_buf_get_name(0)) end, "(n)avigate (t)his directory")
+-- nmap("<leader>nr", function() MiniFiles.open(nil, false) end, "(n)avigate (r)oot directory")
 nmap("<leader>ft", function() telescope.find_files(picker({ cwd = vim.fn.expand('%:h') })) end, "(f)iles in (t)his directory")
 nmap("<leader>fr", function() telescope.find_files(picker({})) end, "(f)iles in (r)oot directory")
 nmap("<leader>fo", function() telescope.oldfiles(picker({})) end, "(f)iles in (o)ldfiles list")

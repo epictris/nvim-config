@@ -23,19 +23,19 @@ return {
 				'markdown', 'markdown_inline', 'cmake' , 'bash'},
 			highlight = { enable = true },
 			indent = { enable = true },
-			incremental_selection = {
-				enable = true,
-				lookahead = true,
-				keymaps = {
-					init_selection = false,
-					['aa'] = '@parameter.outer',
-					['ia'] = '@parameter.inner',
-					['af'] = '@function.outer',
-					['if'] = '@function.inner',
-					['ac'] = '@class.outer',
-					['ic'] = '@class.inner',
-				},
-			},
+			-- incremental_selection = {
+			-- 	enable = true,
+			-- 	lookahead = true,
+			-- 	keymaps = {
+			-- 		init_selection = false,
+			-- 		['aa'] = '@parameter.outer',
+			-- 		['ia'] = '@parameter.inner',
+			-- 		['af'] = '@function.outer',
+			-- 		['if'] = '@function.inner',
+			-- 		['ac'] = '@class.outer',
+			-- 		['ic'] = '@class.inner',
+			-- 	},
+			-- },
 		}
 	end
 }

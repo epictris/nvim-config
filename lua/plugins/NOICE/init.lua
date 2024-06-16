@@ -8,10 +8,11 @@ return {
 	config = function()
 		require('noice').setup({
 			cmdline = {
-				enabled = false
+				enabled = true,
+				view = "cmdline"
 			},
 			messages = {
-				enabled = false
+				enabled = true,
 			},
 			lsp = {
 				override = {

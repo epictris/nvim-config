@@ -16,7 +16,7 @@ return {
 	LUALINE = true,
 	-- MARKS = true,
 	MINI_AI = true,
-	MINI_FILES = true,
+	-- MINI_FILES = true,
 	-- MINI_HIPATTERNS = true,
 	MINI_INDENTSCOPE = true,
 	MINI_OPERATORS = true,
