@@ -7,9 +7,15 @@ return {
 	config = function()
 		local oil = require('oil')
 		oil.setup({
+			default_file_explorer = false,
 			cleanup_delay_ms = 0,
 			delete_to_trash = true,
 			skip_confirm_for_files = true,
+			view_options = {
+				is_hidden_file = function(name, bufnr)
+					return vim.startswith(name, "..")
+				end
+			}
 		})
 		vim.keymap.set('n', '-',
 			function()
