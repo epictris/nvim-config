@@ -29,6 +29,5 @@ vim.diagnostic.config({
 	virtual_text = false
 })
 vim.o.guicursor="i:ver25"
+vim.o.linebreak = true
 -- vim.cmd("autocmd OptionSet guicursor noautocmd set guicursor=")
-
-
