@@ -10,7 +10,6 @@ local args = vim.fn.argv()
 -- Check if there is at least one argument and if it's a directory
 if #args > 0 then
   if is_directory(args[1]) then
-    print("Neovim started with a directory:", args[1])
     local oil = require("oil")
     oil.open()
     require('oil.util').run_after_load(0, function()
