@@ -15,6 +15,7 @@ return {
 	LSPSAGA = true,
 	LUALINE = true,
 	-- MARKS = true,
+	MARKDOWN_PREVIEW = true,
 	MINI_AI = true,
 	-- MINI_FILES = true,
 	-- MINI_HIPATTERNS = true,
