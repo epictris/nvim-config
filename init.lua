@@ -6,4 +6,4 @@ require("keybinds")
 require("autocmds")
 require("theme")
 require("env")
---
+-- test
