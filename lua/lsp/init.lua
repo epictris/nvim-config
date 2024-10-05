@@ -34,7 +34,6 @@ mason_lspconfig.setup_handlers({
     require('lspconfig')['biome'].setup({
         capabilites = capabilities,
         on_attach = function(client, buffer)
-            vim.keymap.set('n', "<C-t>", format_ts)
             on_attach(client, buffer)
         end,
         filetypes = { 'typescript', 'typescriptreact', 'javascriptreact', 'javascript' },
@@ -50,7 +49,7 @@ mason_lspconfig.setup_handlers({
                 completeFunctionCalls = true
             }
         },
-        filetypes = { 'javascriptreact', 'typescript', 'typescriptreact' },
+        filetypes = { 'javascriptreact', 'typescript', 'typescriptreact', 'javascript' },
     }),
     -- pyright config
     require('lspconfig')['pyright'].setup({
