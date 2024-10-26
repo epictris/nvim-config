@@ -598,9 +598,7 @@ NVIM_LSPCONFIG = {
 
 OIL = {
 	'stevearc/oil.nvim',
-	-- dir= "~/projects/oil",
 	opts = {},
-	  -- Optional dependencies
 	dependencies = { "nvim-tree/nvim-web-devicons" },
 	config = function()
 		local oil = require('oil')
@@ -631,7 +629,6 @@ OMNISHARP_EXTENDED = {
 	'Hoffs/omnisharp-extended-lsp.nvim'
 }
 
-
 SUPERMAVEN = {
 	"supermaven-inc/supermaven-nvim",
 	config = function ()
@@ -643,8 +640,6 @@ SUPERMAVEN = {
 		})
 	end
 }
-
-
 
 TELESCOPE = {
 	'nvim-telescope/telescope.nvim',
@@ -730,7 +725,6 @@ TELESCOPE = {
 TREESITTER = {
 	'nvim-treesitter/nvim-treesitter',
 	dependencies = {
-		-- Adds textobjects based on treesitter parsing
 		'nvim-treesitter/nvim-treesitter-textobjects',
 	},
 	build = ':TSUpdate',
@@ -739,7 +733,7 @@ TREESITTER = {
 		require('nvim-treesitter.configs').setup {
 			textobjects = {
 				select = {
-					enable = false,
+				  enable = false,
 				},
 				move = {
 					enable = false
@@ -752,19 +746,13 @@ TREESITTER = {
 				'markdown', 'markdown_inline', 'cmake' , 'bash'},
 			highlight = { enable = true },
 			indent = { enable = true },
-			-- incremental_selection = {
-			-- 	enable = true,
-			-- 	lookahead = true,
-			-- 	keymaps = {
-			-- 		init_selection = false,
-			-- 		['aa'] = '@parameter.outer',
-			-- 		['ia'] = '@parameter.inner',
-			-- 		['af'] = '@function.outer',
-			-- 		['if'] = '@function.inner',
-			-- 		['ac'] = '@class.outer',
-			-- 		['ic'] = '@class.inner',
-			-- 	},
-			-- },
+			incremental_selection = {
+				enable = true,
+				keymaps = {
+				  node_incremental = "v",
+				  node_decremental = "V",
+				},
+		  },
 		}
 	end
 }
