@@ -1,7 +1,3 @@
-local plugins = require("plugins.plugins")
-
-local configs = {}
-
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 
 if not vim.loop.fs_stat(lazypath) then
@@ -16,11 +12,6 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-for plugin, enabled in pairs(plugins) do
-	if enabled == true then
-		local config = require("plugins."..plugin)
-		configs[#configs+1] = config
-	end
-end
+local configs = require("plugins.plugins")
 
 require('lazy').setup(configs)
