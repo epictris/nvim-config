@@ -38,7 +38,7 @@ nmap('<leader>cr', vim.lsp.buf.rename, {desc='Rename'})
 nmap('_', vim.lsp.buf.hover, {desc='Hover documentation'})
 
 nmap('<leader>E', vim.diagnostic.goto_prev, {desc='Jump to previous diagnostic'})
-nmap('<leader>e', vim.diagnostic.goto_next, {desc='Jump to next diagnostic'})
+nmap('<leader>e', function() vim.diagnostic.goto_next() vim.lsp.buf.code_action() end, {desc='Jump to next diagnostic'})
 
 
 vim.g["sneak#s_next"] = 1
@@ -83,6 +83,29 @@ vim.diagnostic.config({
 vim.o.guicursor="i:ver25"
 vim.o.linebreak = true
 
+
+-- vim.lsp.set_log_level('DEBUG')
+vim.lsp.set_log_level('INFO')
+
 require("plugins")
 require("autocmds")
 require("post_init")
+
+-- vim.lsp.set_log_level('TRACE')
+
+-- vim.notify("Starting client")
+--
+-- local client = vim.lsp.start_client({name="splints", cmd= {"splints"}})
+--
+--
+-- if not client then
+--     vim.notify("Failed to start client")
+--     return
+-- end
+--
+-- vim.api.nvim_create_autocmd("FileType", {
+-- 	pattern = "python",
+-- 	callback = function()
+-- 		vim.lsp.buf_attach_client(0, client)
+-- 	end
+-- })

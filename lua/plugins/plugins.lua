@@ -33,22 +33,22 @@ CMP = {
 
 		local lspkind_comparator = function(conf)
 			local lsp_types = require('cmp.types').lsp
-				return function(entry1, entry2)
-					if entry1.source.name ~= 'nvim_lsp' then
-						if entry2.source.name == 'nvim_lsp' then
-							return false
-						else
-							return nil
-						end
-					end
-					local kind1 = lsp_types.CompletionItemKind[entry1:get_kind()]
-					local kind2 = lsp_types.CompletionItemKind[entry2:get_kind()]
-
-					local priority1 = conf.kind_priority[kind1] or 0
-					local priority2 = conf.kind_priority[kind2] or 0
-					if priority1 == priority2 then
+			return function(entry1, entry2)
+				if entry1.source.name ~= 'nvim_lsp' then
+					if entry2.source.name == 'nvim_lsp' then
+						return false
+					else
 						return nil
 					end
+				end
+				local kind1 = lsp_types.CompletionItemKind[entry1:get_kind()]
+				local kind2 = lsp_types.CompletionItemKind[entry2:get_kind()]
+
+				local priority1 = conf.kind_priority[kind1] or 0
+				local priority2 = conf.kind_priority[kind2] or 0
+				if priority1 == priority2 then
+					return nil
+				end
 				return priority2 < priority1
 			end
 		end
@@ -82,7 +82,7 @@ CMP = {
 				{ name = 'nvim_lsp', keyword_length = 1 },
 			},
 			view = { docs = {
-					auto_open = true
+				auto_open = true
 				}
 			},
 			sorting = {
@@ -140,26 +140,49 @@ DIFFVIEW = {
 				return
 			end
 			vim.cmd("DiffviewOpen " .. ref)
-		end, {desc = "open ref diff view"})
+			end, {desc = "open ref diff view"})
 		vim.keymap.set("n", "<leader>dq", ":DiffviewClose<CR>", {desc = "quit diff view"})
 	end
 }
 
 DRESSING = {
 	"stevearc/dressing.nvim",
+	dependencies = {
+		'MunifTanjim/nui.nvim',
+	},
 	config = function ()
 		require("dressing").setup({
-		input = {
-			prefer_width = 10
-		},
-		select = {
-			backend = {
-				'fzf-lua'
+			input = {
+				prefer_width = 10
 			},
-		},
+			select = {
+				get_config = function(opts)
+					if opts.kind == 'codeaction' then
+						return {
+							backend = 'nui',
+							nui = {
+								relative = 'editor',
+								max_width = 40,
+							}
+						}
+						-- return {
+						-- 	backend = {
+						-- 		'fzf-lua'
+						-- 	}
+						-- }
+					else
+						return {
+							backend = {
+								'fzf-lua'
+							}
+						}
+					end
+				end
+			},
 		})
 	end
 }
+
 
 GITSIGNS =  { "lewis6991/gitsigns.nvim",
 	config = function ()
@@ -179,16 +202,16 @@ GITSIGNS =  { "lewis6991/gitsigns.nvim",
 			on_attach = function ()
 				local gs = package.loaded.gitsigns
 				vim.keymap.set("n", "<C-s>", function()
-					if vim.wo.diff then return ']c' end
+				if vim.wo.diff then return ']c' end
 					vim.schedule(gs.next_hunk)
 					return '<Ignore>'
-				end, { expr = true, desc = "jump to next diff"})
+					end, { expr = true, desc = "jump to next diff"})
 
 				vim.keymap.set("n", "<C-c>", function()
-					if vim.wo.diff then return '[c' end
+				if vim.wo.diff then return '[c' end
 					vim.schedule(gs.prev_hunk)
 					return '<Ignore>'
-				end, { expr = true, desc = "jump to last diff"})
+					end, { expr = true, desc = "jump to last diff"})
 
 				vim.keymap.set("n", "<leader>hs", function () gs.stage_hunk({vim.fn.line('.'), vim.fn.line('v')}) end, {desc = "stage hunk"})
 				vim.keymap.set("n", "<leader>hS", gs.stage_buffer, {desc = "stage buffer"})
@@ -252,16 +275,23 @@ INDENT_BLANKLINE = {
 }
 
 LAZYDEV = {
-    "folke/lazydev.nvim",
-    ft = "lua", -- only load on lua files
-    opts = {
-      library = {
-        -- See the configuration section for more details
-        -- Load luvit types when the `vim.uv` word is found
-        { path = "luvit-meta/library", words = { "vim%.uv" } },
-      },
-    },
-  }
+	"folke/lazydev.nvim",
+	ft = "lua", -- only load on lua files
+	opts = {
+		library = {
+			-- See the configuration section for more details
+			-- Load luvit types when the `vim.uv` word is found
+			{ path = "luvit-meta/library", words = { "vim%.uv" } },
+		},
+	},
+}
+
+LSPSAGA = {
+	"glepnir/lspsaga.nvim",
+	config = function ()
+		require("lspsaga").setup({})
+	end
+}
 
 LUALINE = {
 	'nvim-lualine/lualine.nvim',
@@ -271,7 +301,7 @@ LUALINE = {
 	},
 	config = function ()
 		local function cwd()
-		      return vim.fn.getcwd()
+			return vim.fn.getcwd()
 		end
 		local function harpoon_status()
 			local filename = vim.fn.expand("%")
@@ -281,7 +311,7 @@ LUALINE = {
 					return 'MARK ' .. i
 				end
 			end
-		    return ''
+			return ''
 		end
 		local custom_theme = require('lualine.themes.auto')
 		custom_theme.normal.x = { bg = '#ffcc66' , fg = '#0E1019', gui='bold' }
@@ -304,19 +334,19 @@ LUALINE = {
 }
 
 MARKDOWN_PREVIEW = {
-  "iamcco/markdown-preview.nvim",
-  cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-  build = "cd app && yarn install",
-  init = function()
-    vim.g.mkdp_filetypes = { "markdown" }
-  end,
-  ft = { "markdown" },
+	"iamcco/markdown-preview.nvim",
+	cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+	build = "cd app && yarn install",
+	init = function()
+		vim.g.mkdp_filetypes = { "markdown" }
+	end,
+	ft = { "markdown" },
 }
 
 MINI_AI = {
 	"echasnovski/mini.ai",
 	config = function ()
-	  require('mini.ai').setup()
+		require('mini.ai').setup()
 	end
 }
 
@@ -467,22 +497,22 @@ NVIM_DAP = {
 		}
 		dap.adapters.python = {
 			type = "executable",
-				command = (os.getenv("VIRTUAL_ENV") or "") .. "/bin/python3.12",
-				args = {"-m", "debugpy.adapter"}
+			command = (os.getenv("VIRTUAL_ENV") or "") .. "/bin/python3.12",
+			args = {"-m", "debugpy.adapter"}
 		}
 		dap.configurations.python = {
-				{
-					type = 'uncountable_server',
-					name = 'Uncountable',
-					request = 'launch',
-					program = vim.fn.getcwd() .. "/main/site/flask/flask_main.py"
-				},
-				{
-					type = 'python',
-					name = 'File',
-					request = 'launch',
-					program = "${file}"
-				}
+			{
+				type = 'uncountable_server',
+				name = 'Uncountable',
+				request = 'launch',
+				program = vim.fn.getcwd() .. "/main/site/flask/flask_main.py"
+			},
+			{
+				type = 'python',
+				name = 'File',
+				request = 'launch',
+				program = "${file}"
+			}
 		}
 		-- if python_adapter ~= "" then
 		-- 	dap.adapters.python = {
@@ -516,10 +546,10 @@ NVIM_DAP = {
 			ui.open()
 		end
 		dap.listeners.before.event_terminated.dapui_config = function()
-			ui.close()
+		ui.close()
 		end
 		dap.listeners.before.event_exited.dapui_config = function()
-			ui.close()
+		ui.close()
 		end
 	end
 }
@@ -540,6 +570,19 @@ NVIM_LSPCONFIG = {
 	},
 	config = function ()
 		local mason_lspconfig = require('mason-lspconfig')
+
+		-- require("lspconfig.configs").splints = {
+		-- 	default_config = {
+		-- 		filetypes = { "python", "typescript", "javascript", "typescriptreact", "javascriptreact" },
+		-- 		root_dir = function() return vim.fn.getcwd() end,
+		-- 		settings = {
+		-- 			splints = {
+		--
+		-- 			}
+		-- 		},
+		-- 		cmd = { "splints" },
+		-- 	}
+		-- }
 
 		mason_lspconfig.setup_handlers({
 			require('lspconfig')['biome'].setup({
@@ -566,11 +609,11 @@ NVIM_LSPCONFIG = {
 							autoImportCompletions = true,
 							diagnosticMode = 'openFilesOnly',
 							typeCheckingMode = 'basic',
-										exclude = {
-											"**/node_modules",
-											"**/__pycache__",
-											"**/env",
-										}
+							exclude = {
+								"**/node_modules",
+								"**/__pycache__",
+								"**/env",
+							}
 						},
 						linting = { pylintEnabled = false }
 					}
@@ -578,8 +621,12 @@ NVIM_LSPCONFIG = {
 				filetypes = { 'python' }
 			}),
 
+
+			-- require("lspconfig")["splints"].setup({}),
+
+
 			require('lspconfig')['omnisharp'].setup({
-				settings = {},
+			settings = {},
 				cmd = { "dotnet", "/home/tris/.local/share/nvim/mason/packages/omnisharp/libexec/OmniSharp.dll"},
 			}),
 
@@ -614,7 +661,7 @@ OIL = {
 			}
 		})
 		vim.keymap.set('n', '-',
-			function()
+		function()
 				oil.open()
 				require('oil.util').run_after_load(0, function()
 					oil.open_preview()
@@ -657,23 +704,23 @@ TELESCOPE = {
 	},
 	config = function ()
 		local nmap = function(keys, func, desc)
-			if desc then
-		desc = desc
+		if desc then
+				desc = desc
 			end
 			vim.keymap.set('n', keys, func, { desc = desc })
 		end
 		local lga_actions = require('telescope-live-grep-args.actions')
 		local builtin = require('telescope.builtin')
 		local layout_config = {
-				preview_cutoff = 1, -- Preview should always show (unless previewer = false)
+			preview_cutoff = 1, -- Preview should always show (unless previewer = false)
 
-				width = function(_, max_columns, _)
-					return math.min(max_columns, 160)
-				end,
+			width = function(_, max_columns, _)
+				return math.min(max_columns, 160)
+			end,
 
-				height = function(_, _, max_lines)
-					return math.min(max_lines, 15)
-				end,
+			height = function(_, _, max_lines)
+				return math.min(max_lines, 15)
+			end,
 		}
 		local picker_dropdown = function(args)
 			args = args or {}
@@ -729,11 +776,11 @@ TREESITTER = {
 	},
 	build = ':TSUpdate',
 	config = function ()
----@diagnostic disable-next-line: missing-fields
+		---@diagnostic disable-next-line: missing-fields
 		require('nvim-treesitter.configs').setup {
 			textobjects = {
 				select = {
-				  enable = false,
+					enable = false,
 				},
 				move = {
 					enable = false
@@ -749,10 +796,10 @@ TREESITTER = {
 			incremental_selection = {
 				enable = true,
 				keymaps = {
-				  node_incremental = "v",
-				  node_decremental = "V",
+					node_incremental = "v",
+					node_decremental = "V",
 				},
-		  },
+			},
 		}
 	end
 }
@@ -791,6 +838,7 @@ return {
 	HARPOON,
 	INDENT_BLANKLINE,
 	LAZYDEV,
+	LSPSAGA,
 	LUALINE,
 	MARKDOWN_PREVIEW,
 	MINI_AI,
