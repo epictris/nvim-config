@@ -589,6 +589,10 @@ NVIM_LSPCONFIG = {
 				filetypes = { 'typescript', 'typescriptreact', 'javascriptreact', 'javascript' },
 			}),
 
+			require('lspconfig')['gdscript'].setup({
+				cmd = { "godot-wsl-lsp", "--useMirroredNetworking" }
+			}),
+
 			require('lspconfig')['tsserver'].setup({
 				settings = {
 					completions = {
