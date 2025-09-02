@@ -51,9 +51,8 @@ nmap('<leader>cr', vim.lsp.buf.rename, {desc='Rename'})
 
 nmap('_', vim.lsp.buf.hover, {desc='Hover documentation'})
 
-nmap('<leader>E', vim.diagnostic.goto_prev, {desc='Jump to previous diagnostic'})
-nmap('<leader>e', vim.diagnostic.goto_next, {desc='Jump to next diagnostic'})
-nmap('<leader>a', vim.lsp.buf.code_action, {desc='Jump to next diagnostic'})
+nmap('<leader>E', function() vim.diagnostic.jump({count=1, float=true}) end, {desc='Jump to previous diagnostic'})
+nmap('<leader>e', function() vim.diagnostic.jump({count=-1, float=true}) end, {desc='Jump to next diagnostic'})
 
 
 vim.g["sneak#s_next"] = 1

@@ -449,33 +449,6 @@ NVIM_BQF = {
 	"kevinhwang91/nvim-bqf",
 }
 
-ACTIONS_PREVIEW = {
-	"aznhe21/actions-preview.nvim",
-	dependencies = {
-		"MunifTanjim/nui.nvim",
-	},
-	config = function()
-		require("actions-preview").setup({
-			backend = {"nui"},
-			nui = {
-				layout = {
-					size = {
-						width = "30%",
-						height = "30%"
-					}
-				},
-				preview = {
-					size = "75%",
-				},
-				select = {
-					size  = "25%",
-				}
-			}
-		})
-		vim.keymap.set({ "v", "n" }, "<leader>ca", require("actions-preview").code_actions)
-	end,
-}
-
 TINY_CODE_ACTION = {
 	"rachartier/tiny-code-action.nvim",
 	dependencies = {
@@ -497,10 +470,14 @@ TINY_CODE_ACTION = {
 	opts = {},
 	config = function () 
 		require("tiny-code-action").setup({
-			backend = "vim",
-			picker = "telescope",
+			backend = "diffsofancy",
+			picker = {
+				"buffer",
+				opts = {
+					auto_preview = true,
+				}},
 		})
-		vim.keymap.set({"n"}, '<leader>co', require("tiny-code-action").code_action, {desc='Code Action'})
+		vim.keymap.set({"n"}, '<leader>a', require("tiny-code-action").code_action, {desc='Code Action'})
 	end
 
 }
@@ -683,8 +660,7 @@ NVIM_LSPCONFIG = {
 			automatic_enable = true,
 		}
 
-
-		local mason_lspconfig = require('mason-lspconfig').setup({
+		require('mason-lspconfig').setup({
 			ensure_installed = {
 				'biome',
 				'pyright',
@@ -886,7 +862,6 @@ WHICH_KEY = {
 
 return {
 	AYU,
-	ACTIONS_PREVIEW,
 	BUFFER_MANAGER,
 	CMP,
 	-- DIFFVIEW,
