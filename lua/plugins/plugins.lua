@@ -202,13 +202,13 @@ GITSIGNS =  { "lewis6991/gitsigns.nvim",
 			on_attach = function ()
 				local gs = package.loaded.gitsigns
 				vim.keymap.set("n", "<C-s>", function()
-				if vim.wo.diff then return ']c' end
+					if vim.wo.diff then return ']c' end
 					vim.schedule(gs.next_hunk)
 					return '<Ignore>'
 					end, { expr = true, desc = "jump to next diff"})
 
 				vim.keymap.set("n", "<C-c>", function()
-				if vim.wo.diff then return '[c' end
+					if vim.wo.diff then return '[c' end
 					vim.schedule(gs.prev_hunk)
 					return '<Ignore>'
 					end, { expr = true, desc = "jump to last diff"})
@@ -449,6 +449,62 @@ NVIM_BQF = {
 	"kevinhwang91/nvim-bqf",
 }
 
+ACTIONS_PREVIEW = {
+	"aznhe21/actions-preview.nvim",
+	dependencies = {
+		"MunifTanjim/nui.nvim",
+	},
+	config = function()
+		require("actions-preview").setup({
+			backend = {"nui"},
+			nui = {
+				layout = {
+					size = {
+						width = "30%",
+						height = "30%"
+					}
+				},
+				preview = {
+					size = "75%",
+				},
+				select = {
+					size  = "25%",
+				}
+			}
+		})
+		vim.keymap.set({ "v", "n" }, "<leader>ca", require("actions-preview").code_actions)
+	end,
+}
+
+TINY_CODE_ACTION = {
+	"rachartier/tiny-code-action.nvim",
+	dependencies = {
+		{"nvim-lua/plenary.nvim"},
+
+		-- optional picker via telescope
+		{"nvim-telescope/telescope.nvim"},
+		-- optional picker via fzf-lua
+		{"ibhagwan/fzf-lua"},
+		-- .. or via snacks
+		{
+			"folke/snacks.nvim",
+			opts = {
+				terminal = {},
+			}
+		}
+	},
+	event = "LspAttach",
+	opts = {},
+	config = function () 
+		require("tiny-code-action").setup({
+			backend = "vim",
+			picker = "telescope",
+		})
+		vim.keymap.set({"n"}, '<leader>co', require("tiny-code-action").code_action, {desc='Code Action'})
+	end
+
+}
+
 
 NVIM_DAP = {
 	"mfussenegger/nvim-dap",
@@ -546,10 +602,10 @@ NVIM_DAP = {
 			ui.open()
 		end
 		dap.listeners.before.event_terminated.dapui_config = function()
-		ui.close()
+			ui.close()
 		end
 		dap.listeners.before.event_exited.dapui_config = function()
-		ui.close()
+			ui.close()
 		end
 	end
 }
@@ -569,76 +625,77 @@ NVIM_LSPCONFIG = {
 		}
 	},
 	config = function ()
-		local mason_lspconfig = require('mason-lspconfig')
-
-		-- require("lspconfig.configs").splints = {
-		-- 	default_config = {
-		-- 		filetypes = { "python", "typescript", "javascript", "typescriptreact", "javascriptreact" },
-		-- 		root_dir = function() return vim.fn.getcwd() end,
-		-- 		settings = {
-		-- 			splints = {
-		--
-		-- 			}
-		-- 		},
-		-- 		cmd = { "splints" },
-		-- 	}
-		-- }
-
-		mason_lspconfig.setup_handlers({
-			require('lspconfig')['biome'].setup({
-				filetypes = { 'typescript', 'typescriptreact', 'javascriptreact', 'javascript' },
-			}),
-
-			require('lspconfig')['tsserver'].setup({
-				settings = {
-					completions = {
-						completeFunctionCalls = true
-					}
-				},
-				filetypes = { 'javascriptreact', 'typescript', 'typescriptreact' },
-			}),
-
-			require('lspconfig')['pyright'].setup({
-				settings = {
-					pyright = {
-						disableOrganizeImports = true
-					},
-					python = {
-						analysis = {
-							useLibraryCodeForTypes = false,
-							autoImportCompletions = true,
-							diagnosticMode = 'openFilesOnly',
-							typeCheckingMode = 'basic',
-							exclude = {
-								"**/node_modules",
-								"**/__pycache__",
-								"**/env",
-							}
-						},
-						linting = { pylintEnabled = false }
-					}
-				},
-				filetypes = { 'python' }
-			}),
-
-
-			-- require("lspconfig")["splints"].setup({}),
-
-
-			require('lspconfig')['omnisharp'].setup({
-			settings = {},
-				cmd = { "dotnet", "/home/tris/.local/share/nvim/mason/packages/omnisharp/libexec/OmniSharp.dll"},
-			}),
-
-			require('lspconfig')['lua_ls'].setup({
-				settings = {
-					Lua = {
-						workspace = { checkThirdParty = false },
-						telemetry = { enable = false },
-					},
-				},
-			}),
+		vim.lsp.config("biome", {
+			filetypes = { 'typescript', 'typescriptreact', 'javascriptreact', 'javascript' },
 		})
+
+		vim.lsp.config("tsserver", {
+			settings = {
+				completions = {
+					completeFunctionCalls = true
+				}
+			},
+			filetypes = { 'javascriptreact', 'typescript', 'typescriptreact' },
+		})
+
+		vim.lsp.config("pyright", {
+			settings = {
+				pyright = {
+					disableOrganizeImports = true
+				},
+				python = {
+					analysis = {
+						useLibraryCodeForTypes = false,
+						autoImportCompletions = true,
+						diagnosticMode = 'openFilesOnly',
+						typeCheckingMode = 'basic',
+						exclude = {
+							"**/node_modules",
+							"**/__pycache__",
+							"**/env",
+						}
+					},
+					linting = { pylintEnabled = false }
+				}
+			},
+			filetypes = { 'python' }
+		})
+
+		vim.lsp.config("omnisharp", {
+			settings = {},
+			cmd = { "dotnet", "/home/tris/.local/share/nvim/mason/packages/omnisharp/libexec/OmniSharp.dll"},
+		})
+
+		vim.lsp.config("lua_ls", {
+			settings = {
+				Lua = {
+					workspace = { checkThirdParty = false },
+					telemetry = { enable = false },
+				},
+			},
+			cmd = { "lua-language-server" },
+			filetypes = { "lua" },
+		})
+
+		vim.lsp.config["splints"] = {
+			cmd = { "splints" },
+			filetypes = { "python" },
+			automatic_enable = true,
+		}
+
+
+		local mason_lspconfig = require('mason-lspconfig').setup({
+			ensure_installed = {
+				'biome',
+				'pyright',
+				'tsserver',
+				'omnisharp',
+				'lua_ls',
+				'splints',
+			},
+		})
+
+		vim.lsp.enable({"splints", "lua_ls", "pyright", "tsserver", "omnisharp", "biome"})
 
 	end
 }
@@ -661,7 +718,7 @@ OIL = {
 			}
 		})
 		vim.keymap.set('n', '-',
-		function()
+			function()
 				oil.open()
 				require('oil.util').run_after_load(0, function()
 					oil.open_preview()
@@ -704,7 +761,7 @@ TELESCOPE = {
 	},
 	config = function ()
 		local nmap = function(keys, func, desc)
-		if desc then
+			if desc then
 				desc = desc
 			end
 			vim.keymap.set('n', keys, func, { desc = desc })
@@ -829,6 +886,7 @@ WHICH_KEY = {
 
 return {
 	AYU,
+	ACTIONS_PREVIEW,
 	BUFFER_MANAGER,
 	CMP,
 	-- DIFFVIEW,
@@ -853,6 +911,7 @@ return {
 	OMNISHARP_EXTENDED,
 	SUPERMAVEN,
 	TELESCOPE,
+	TINY_CODE_ACTION,
 	TREESITTER,
 	VIM_BE_GOOD,
 	VIM_SLEUTH,

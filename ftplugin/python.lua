@@ -7,7 +7,7 @@ end
 
 vim.keymap.set("n", "<C-f>", format_python)
 
-vim.lsp.start({
-  cmd = { "splints" },
-  root_dir = vim.fn.getcwd(),
-})
+-- vim.lsp.start({
+--   cmd = { "splints" },
+--   root_dir = vim.fn.getcwd(),
+-- })
