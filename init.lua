@@ -1,5 +1,17 @@
 vim.g.mapleader = " "
 
+vim.g.clipboard = { 
+	name = "myClipboard",
+	copy = {
+		['+'] = {"clip.exe"},
+		['*'] = {"clip.exe"},
+	},
+	paste = {
+		['+'] = {"clip.exe"},
+		['*'] = {"clip.exe"},
+	},
+}
+
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
 	callback = function()
