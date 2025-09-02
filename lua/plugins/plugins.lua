@@ -656,7 +656,7 @@ NVIM_LSPCONFIG = {
 
 		vim.lsp.config["splints"] = {
 			cmd = { "splints" },
-			filetypes = { "python" },
+			filetypes = { "python", "typescript", "javascript" },
 			automatic_enable = true,
 		}
 
